@@ -5,7 +5,6 @@ import MarketingMain from 'layouts/Main/MarketingMain';
 import { ZestyView } from 'lib/ZestyView';
 import useIsLoggedIn from 'components/hooks/useIsLoggedIn';
 import Main from 'layouts/Main';
-import { getIsAuthenticated } from 'utils';
 
 export const GlobalContext = createContext();
 export default function Zesty(props) {
