@@ -41,7 +41,8 @@ export const isUserAuthenticated = async (request, isGSSP = false) => {
   });
   const data = await response.json();
 
-  return data?.code === 200 ? true : false;
+  // return data?.code === 200 ? true : false;
+  return false;
 };
 
 export const config = {

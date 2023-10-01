@@ -64,7 +64,7 @@ export async function fetchPage(
     undefined === process.env.PRODUCTION || process.env.PRODUCTION === 'true'
       ? true
       : false;
-  let zestyURL = '/';
+  let zestyURL = 'https://www.zesty.io';
   // this is a override for using multiple instances in a single website
 
   let zestyJSONURL =
