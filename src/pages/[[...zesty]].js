@@ -6,7 +6,6 @@ import { ZestyView } from 'lib/ZestyView';
 import useIsLoggedIn from 'components/hooks/useIsLoggedIn';
 import Main from 'layouts/Main';
 import { getIsAuthenticated } from 'utils';
-import { isUserAuthenticated } from 'middleware';
 
 export const GlobalContext = createContext();
 export default function Zesty(props) {
@@ -85,8 +84,7 @@ async function fetchData({ isProd = false, dataType }) {
 
 // This gets called on every request
 export async function getServerSideProps({ req, res, resolvedUrl }) {
-  let isAuthenticated =
-    (await isUserAuthenticated(req, true)) || getIsAuthenticated(res);
+  let isAuthenticated = false;
   const isProd = process.env.PRODUCTION === 'true' ? true : false;
   // does not display with npm run dev
 
