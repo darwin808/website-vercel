@@ -1,10 +1,9 @@
 import { React, createContext } from 'react';
-import { fetchGqlData, fetchPage } from 'lib/api';
-import { githubFetch } from 'lib/githubFetch';
 import MarketingMain from 'layouts/Main/MarketingMain';
 import { ZestyView } from 'lib/ZestyView';
 import useIsLoggedIn from 'components/hooks/useIsLoggedIn';
 import Main from 'layouts/Main';
+import { dataHome } from 'components/globals/constants';
 
 export const GlobalContext = createContext();
 export default function Zesty(props) {
@@ -42,45 +41,6 @@ export default function Zesty(props) {
   );
 }
 
-const cache = {};
-
-// Function to fetch the page data
-async function fetchPageData(url) {
-  // Check if the data is already cached
-  if (cache[url]) {
-    return cache[url];
-  }
-
-  // Fetch the page data
-  const data = await fetchPage(url);
-
-  // Cache the data
-  cache[url] = data;
-
-  return data;
-}
-
-const cacheData = {};
-
-async function fetchData({ isProd = false, dataType }) {
-  const cacheKey = `${dataType}Data`;
-
-  // Check if the data is already cached
-  if (cacheData[cacheKey]) {
-    return cacheData[cacheKey];
-  }
-
-  // Fetch the data
-  const data = await fetchGqlData(isProd, dataType);
-
-  // Cache the data if PRODUCTION = true
-  if (isProd) {
-    cacheData[cacheKey] = data;
-  }
-
-  return data;
-}
-
 // This gets called on every request
 export async function getServerSideProps({ req, res, resolvedUrl }) {
   let isAuthenticated = false;
@@ -99,19 +59,19 @@ export async function getServerSideProps({ req, res, resolvedUrl }) {
     `${process.env.zesty.instance_zuid}, zesty.io`,
   );
   // Fetch the page data using the cache function
-  let data = await fetchPageData(resolvedUrl);
+  let data = dataHome;
   // attempt to get page data relative to zesty
 
   let products = [];
   let productGlossary = [];
   let docs = [];
 
-  productGlossary = await fetchData({ isProd, dataType: 'product_glossary' });
+  // productGlossary = await fetchData({ isProd, dataType: 'product_glossary' });
   if (req.url.includes('/product')) {
-    products = await fetchData({ isProd, dataType: 'product' });
+    // products = await fetchData({ isProd, dataType: 'product' });
   }
   if (req.url.includes('/docs')) {
-    docs = await fetchData({ isProd, dataType: 'zesty_docs' });
+    // docs = await fetchData({ isProd, dataType: 'zesty_docs' });
   }
 
   const sso = {
@@ -137,16 +97,16 @@ export async function getServerSideProps({ req, res, resolvedUrl }) {
     },
   };
 
-  // This section holds data settings for fetching Github Data
-  if (req.url.includes('/roadmap/') && process.env.GITHUB_AUTH) {
-    data.github_data = await githubFetch({
-      organization: `"Zesty-io"`,
-      projectNumber: data.project_number,
-      columns: data.max_column,
-      cards: data.max_card,
-      discussions: data.max_discussion,
-    });
-  }
+  // // This section holds data settings for fetching Github Data
+  // if (req.url.includes('/roadmap/') && process.env.GITHUB_AUTH) {
+  //   data.github_data = await githubFetch({
+  //     organization: `"Zesty-io"`,
+  //     projectNumber: data.project_number,
+  //     columns: data.max_column,
+  //     cards: data.max_card,
+  //     discussions: data.max_discussion,
+  //   });
+  // }
 
   // generate a status 404 page
   if (data.error) return { notFound: true };
